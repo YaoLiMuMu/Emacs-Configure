@@ -16,10 +16,14 @@
 		      magit
 		      org-pomodoro
 		      bing-dict
+                      expand-region
+                      iedit
+                      auto-yasnippet
 		      ;; --- major mode ---
 		      js2-mode
 		      markdown-mode
                       xcscope
+                      web-mode
 		      ;; --- python ide ---
 		      elpy
 		      flycheck
@@ -52,6 +56,8 @@
  '(company-idle-delay 0.2)
  '(company-minimum-prefix-length 2)
  '(menu-bar-mode nil)
+ '(popwin:popup-window-position (quote right))
+ '(popwin:popup-window-width 40)
  '(send-mail-function (quote mailclient-send-it))
  '(session-use-package t nil (session)))
 (custom-set-faces
@@ -83,7 +89,7 @@ Tel: +8617689447702
 (global-set-key (kbd "<f12>") 'open-my-file)
 (load-theme 'monokai 1)	        	;set default themes
 (add-hook 'emacs-lisp-mode-hook 'show-paren-mode) ;show parens mode
-;; show paren mode repair
+;; show paren mode repair fix some smartparen quote issue
 (define-advice show-paren-function (:around (fn) fix-show-paren-function)
   "Highlight enclosing parens."
   (cond ((looking-at-p "\\s(") (funcall fn))
@@ -263,8 +269,7 @@ Tel: +8617689447702
 	 :empty-lines 1)))
 (global-set-key (kbd "C-c r") 'org-capture)
 (prefer-coding-system 'utf-8)		;(set-language-environment 'utf-8)
-;; bing-translate
-(global-set-key (kbd "C-c d") 'bing-dict-brief)
+;; bing-translate(global-set-key (kbd "C-c d") 'bing-dict-brief)
 (setq bing-dict-save-search-result t)
 (setq bing-dict-org-file "c:/users/wo347/OneDrive/Readme/vocabulary.org")
 (setq default-major-mode 'text-mode)	;text mode repalce fundamental-mode
@@ -333,4 +338,56 @@ Tel: +8617689447702
       (progn
 	(indent-buffer)
 	(message "Indent buffer.")))))
+(global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
 (sp-local-pair '(emacs-lisp-mode lisp-interaction-mode) "'" nil :actions nil)
+(setq auto-mode-alist                   ;call js2-mode and web-mode when open js file/html file
+      (append
+       '(("\\.js\\'" . js2-mode))
+       '(("\\.html\\'" . web-mode))
+       auto-mode-alist))
+(defun my-web-mode-indent-setup ()
+  (setq web-mode-markup-indent-offset 2) ; web-mode, html tag in html file
+  (setq web-mode-css-indent-offset 2)    ; web-mode, css in html file
+  (setq web-mode-code-indent-offset 2)   ; web-mode, js code in html file
+  )
+(add-hook 'web-mode-hook 'my-web-mode-indent-setup)
+(defun my-toggle-web-indent ()
+  (interactive)
+  ;; web development
+  (if (or (eq major-mode 'js-mode) (eq major-mode 'js2-mode))
+      (progn
+	(setq js-indent-level (if (= js-indent-level 2) 4 2))
+	(setq js2-basic-offset (if (= js2-basic-offset 2) 4 2))))
+  (if (eq major-mode 'web-mode)
+      (progn (setq web-mode-markup-indent-offset (if (= web-mode-markup-indent-offset 2) 4 2))
+	     (setq web-mode-css-indent-offset (if (= web-mode-css-indent-offset 2) 4 2))
+	     (setq web-mode-code-indent-offset (if (= web-mode-code-indent-offset 2) 4 2))))
+  (if (eq major-mode 'css-mode)
+      (setq css-indent-offset (if (= css-indent-offset 2) 4 2)))
+  (setq indent-tabs-mode nil))
+(global-set-key (kbd "C-c t i") 'my-toggle-web-indent)
+(defun occur-dwim ()
+  "Call `occur' with a sane default."
+  (interactive)
+  (push (if (region-active-p)
+	    (buffer-substring-no-properties
+	     (region-beginning)
+	     (region-end))
+	  (let ((sym (thing-at-point 'symbol)))
+	    (when (stringp sym)
+	      (regexp-quote sym))))
+	regexp-history)
+  (call-interactively 'occur))
+(global-set-key (kbd "M-s o") 'occur-dwim)
+(global-set-key (kbd "C-=") 'er/expand-region)
+(global-set-key (kbd "M-s e") 'iedit-mode)
+(with-eval-after-load 'company
+  (define-key company-active-map (kbd "M-n") nil)
+  (define-key company-active-map (kbd "M-p") nil)
+  (define-key company-active-map (kbd "C-n") #'company-select-next)
+  (define-key company-active-map (kbd "C-p") #'company-select-previous))
+(yas-reload-all)
+(add-hook 'prog-mode-hook #'yas-minor-mode)
+(global-set-key (kbd "H-w") #'aya-create)
+(global-set-key (kbd "H-y") #'aya-expand)
+(global-set-key (kbd "C-w") 'backward-kill-word)
