@@ -19,6 +19,7 @@
                       expand-region
                       iedit
                       auto-yasnippet
+                      helm-ag
 		      ;; --- major mode ---
 		      js2-mode
 		      markdown-mode
@@ -391,3 +392,4 @@ Tel: +8617689447702
 (global-set-key (kbd "H-w") #'aya-create)
 (global-set-key (kbd "H-y") #'aya-expand)
 (global-set-key (kbd "C-w") 'backward-kill-word)
+(global-set-key (kbd "C-c p s") 'helm-do-ag-project-root)
