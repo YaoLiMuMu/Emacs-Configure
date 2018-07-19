@@ -20,6 +20,8 @@
                       iedit
                       auto-yasnippet
                       helm-ag
+                      which-key
+                      evil-nerd-commenter 
 		      ;; --- major mode ---
 		      js2-mode
 		      markdown-mode
@@ -30,6 +32,7 @@
 		      flycheck
 		      py-autopep8
 		      matlab-mode
+                      ein
 		      ;; --- minor mode ---
 		      nodejs-repl
 		      exec-path-from-shell
@@ -393,3 +396,9 @@ Tel: +8617689447702
 (global-set-key (kbd "H-y") #'aya-expand)
 (global-set-key (kbd "C-w") 'backward-kill-word)
 (global-set-key (kbd "C-c p s") 'helm-do-ag-project-root)
+(global-set-key (kbd "C-x g") 'magit-status)
+(which-key-mode 1)
+(evilnc-default-hotkeys)
+;(define-key evil-normal-state-map (kbd ",/") 'evilnc-comment-or-uncomment-lines)
+;(define-key evil-visual-state-map (kbd ",/") 'evilnc-comment-or-uncomment-lines)
+(server-start)
