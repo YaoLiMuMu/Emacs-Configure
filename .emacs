@@ -21,7 +21,8 @@
                       auto-yasnippet
                       helm-ag
                       which-key
-                      evil-nerd-commenter 
+                      evil-nerd-commenter
+                      ahk-mode
 		      ;; --- major mode ---
 		      js2-mode
 		      markdown-mode
@@ -273,7 +274,8 @@ Tel: +8617689447702
 	 :empty-lines 1)))
 (global-set-key (kbd "C-c r") 'org-capture)
 (prefer-coding-system 'utf-8)		;(set-language-environment 'utf-8)
-;; bing-translate(global-set-key (kbd "C-c d") 'bing-dict-brief)
+;; bing-translate
+(global-set-key (kbd "C-c d") 'bing-dict-brief)
 (setq bing-dict-save-search-result t)
 (setq bing-dict-org-file "c:/users/wo347/OneDrive/Readme/vocabulary.org")
 (setq default-major-mode 'text-mode)	;text mode repalce fundamental-mode
@@ -348,6 +350,7 @@ Tel: +8617689447702
       (append
        '(("\\.js\\'" . js2-mode))
        '(("\\.html\\'" . web-mode))
+       '(("\\.ahk\\'" . ahk-mode))      ;ahk file to ahk-mode
        auto-mode-alist))
 (defun my-web-mode-indent-setup ()
   (setq web-mode-markup-indent-offset 2) ; web-mode, html tag in html file
@@ -399,6 +402,28 @@ Tel: +8617689447702
 (global-set-key (kbd "C-x g") 'magit-status)
 (which-key-mode 1)
 (evilnc-default-hotkeys)
-;(define-key evil-normal-state-map (kbd ",/") 'evilnc-comment-or-uncomment-lines)
-;(define-key evil-visual-state-map (kbd ",/") 'evilnc-comment-or-uncomment-lines)
 (server-start)
+(defun qiang-comment-dwim-line (&optional arg)
+  (interactive "*P")
+  (comment-normalize-vars)
+  (if (and (not (region-active-p)) (not (looking-at "[ \t]*$")))
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+    (comment-dwim arg)))
+(global-set-key "\M-;" 'qiang-comment-dwim-line)
+(defun middle-of-line ()
+  "Put cursor at the middle point of the line."
+  (interactive)
+  (goto-char (/ (+ (point-at-bol) (point-at-eol)) 2)))
+(global-set-key (kbd "C-i") 'middle-of-line)
+(defun insert-current-date ()
+  "Insert the current date15:55:11"
+  (interactive "*")
+;(insert (format-time-string "%Y/%m/%d %H:%M:%S" (current-time))))
+  (insert (format-time-string "%Y/%m/%d" (current-time))))
+(global-set-key "\M-sd" 'insert-current-date)
+(defun insert-current-time ()
+  "Insert the current time"
+  (interactive "*")
+;(insert (format-time-string "%Y/%m/%d %H:%M:%S" (current-time))))
+  (insert (format-time-string "%H:%M:%S" (current-time))))
+(global-set-key "\M-st" 'insert-current-time)
