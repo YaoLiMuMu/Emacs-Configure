@@ -1,8 +1,8 @@
-(when (>= emacs-major-version 24)	;cleck emacs version
-  (require 'package)
-  (package-initialize)
-  (setq package-archives '(("melpa" . "http://elpa.emacs-china.org/melpa/"))))
-(require 'cl)				;cl-common lisp extension
+(require 'package)                      ;auto-load package
+(add-to-list 'package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
+                                 ("melpa" . "http://elpa.emacs-china.org/melpa/")))
+(package-initialize)
+(require 'cl)
 (defvar my/packages '(			;packages list adn syc
 		      company		;complete anything
 		      ;; --- better editor ---
